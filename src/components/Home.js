@@ -4,6 +4,7 @@ import '../App.css';
 import Pagination from './Pagination';
 import List from './List';
 import _ from 'lodash'
+import { Link } from 'react-router-dom';
 
 const LOAD_STATE = {
     SUCCESS: 'SUCCESS',
@@ -73,6 +74,7 @@ class Home extends Component {
 
 
     debounce() {
+        this.debounceSearch.cancel()
         this.setState({ term: this.input.current.value })
         this.fetchPhotos(this.input.current.value, this.state.currentPage)
     }
@@ -85,7 +87,8 @@ class Home extends Component {
     renderHeader() {
         return (
             <div className="header">
-                <a href="/" className="logo">Unsplash</a>
+                {/* <a href="/" className="logo">Unsplash</a> */}
+                <Link to="/" className="Logo">Unsplash</Link>
                 <div className="header-right">
                     <form>
                         <input
