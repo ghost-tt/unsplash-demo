@@ -4,8 +4,8 @@
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -213,7 +213,6 @@ input[type="text"]:focus {
   outline-color: unset;
 }
 
-
 .header {
   width: 100%;
   overflow: hidden;
@@ -229,7 +228,7 @@ input[type="text"]:focus {
   text-align: center;
   padding: 12px;
   text-decoration: none;
-  font-size: 18px; 
+  font-size: 18px;
   line-height: 25px;
   border-radius: 4px;
 }
@@ -238,7 +237,6 @@ input[type="text"]:focus {
   font-size: 25px;
   font-weight: bold;
 }
-
 
 .header-right {
   float: right;
@@ -250,12 +248,11 @@ input[type="text"]:focus {
     display: block;
     text-align: left;
   }
-  
+
   .header-right {
     float: none;
   }
 }
-
 
 .download__icon {
   position: absolute;
@@ -263,9 +260,8 @@ input[type="text"]:focus {
   right: 1%;
   color: #01beb8;
   font-size: 2rem;
-  
 }
 
-.popup-content  {
-  width: 80% !important;
+.popup-content {
+  width: 60% !important;
 }
