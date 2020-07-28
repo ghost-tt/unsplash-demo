@@ -87,17 +87,14 @@ class Home extends Component {
     renderHeader() {
         return (
             <div className="header">
-                {/* <a href="/" className="logo">Unsplash</a> */}
                 <Link to="/" className="Logo">Unsplash</Link>
                 <div className="header-right">
-                    <form>
                         <input
                             type="text"
                             placeholder="Search"
                             ref={this.input}
                             onChange={this.onChange}
                         />
-                    </form>
                 </div>
             </div>
         )
