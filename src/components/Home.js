@@ -24,7 +24,7 @@ class Home extends Component {
             loadState: LOAD_STATE.LOADING
         }
         this.input = React.createRef();
-        this.debounceSearch = _.debounce(this.debounce, 1000)
+        this.debounceSearch = _.debounce(this.debounce, 600)
     }
 
     componentDidCatch(error, errorInfo) {
