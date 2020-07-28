@@ -45,7 +45,7 @@ class Home extends Component {
     fetchPhotos(search, page) {
         var self = this;
         const { perPage } = this.state;
-        const appId = "22b7b54287910389edfae878f576488bbc5b540a46daa0d2833ba858ce03b143"
+        const appId = process.env.REACT_APP_API_KEY
         const baseUrl = 'https://api.unsplash.com/search/photos'
         const options = {
             params: {
