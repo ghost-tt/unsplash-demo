@@ -21,7 +21,7 @@ const DownloadImage = props => {
                         >
                             <IoMdDownload className="download__icon" />
                         </a>
-                        <img src={props.info.urls.full} alt={props.info.id} style={{ width: '100%' }} />
+                        <img src={props.info.urls.full} alt={props.info.id} className="popup__img"/>
                     </div>
                 </div>
             </Popup>
@@ -52,7 +52,6 @@ class Image extends React.Component {
     }
 
     render() {
-        console.log('prop values --> ', this.props.location.state.info)
         const photo = this.props.location.state.info;
 
         return (
