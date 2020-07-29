@@ -1,10 +1,12 @@
-import React, { Component, Fragment } from 'react';
-import axios from 'axios';
+import React, { Fragment, useState, useRef, useEffect } from 'react';
 import '../App.css';
-import Pagination from './Pagination';
 import List from './List';
 import _ from 'lodash'
-import { Link } from 'react-router-dom';
+import unsplash from './api/unsplash';
+import { IoMdSearch } from 'react-icons/io'
+import Swal from 'sweetalert2'
+
+
 
 const LOAD_STATE = {
     SUCCESS: 'SUCCESS',
@@ -12,142 +14,135 @@ const LOAD_STATE = {
     LOADING: 'LOADING'
 };
 
-class Home extends Component {
-    constructor() {
-        super();
-        this.state = {
-            term: 'cars',
-            photos: [],
-            totalPhotos: 0,
-            perPage: 9,
-            currentPage: 1,
-            loadState: LOAD_STATE.LOADING
-        }
-        this.input = React.createRef();
-        this.debounceSearch = _.debounce(this.debounce, 600)
+const Home = () => {
+    const [count, setCount] = useState(2);
+    const [search, setSearch] = useState({
+        term: '',
+        photos: [],
+        totalPhotos: 0,
+        perPage: 9,
+        currentPage: 1,
+        loadState: LOAD_STATE.LOADING,
+        errorInfo: undefined
+    });
+
+    const input = useRef();
+
+    const debounce = (e) => {
+        debounceSearch.cancel();
+        setSearch({ ...search, term: e.target.value });
+        fetchPhotos(e.target.value, search.currentPage);
     }
 
-    componentDidCatch(error, errorInfo) {
-        console.log('Error --> ', error)
-    }
+    const debounceSearch = _.debounce(debounce, 600)
 
-    componentDidMount() {
-        this.fetchPhotos(this.state.term, this.state.currentPage);
-    }
+    useEffect(() => {
+        fetchPhotos('cars', search.currentPage);
+    }, []);
 
-    shouldComponentUpdate(nextProps, nextState) {
-        if (nextState.photos.length === 0 || nextState.loadState === 'LOADING') {
-            return false;
-        }
-        return true
-    }
 
-    fetchPhotos(search, page) {
-        var self = this;
-        const { perPage } = this.state;
-        const appId = '22b7b54287910389edfae878f576488bbc5b540a46daa0d2833ba858ce03b143'
-        const baseUrl = 'https://api.unsplash.com/search/photos'
-        const options = {
+    const fetchPhotos = async (searchTerm, page) => {
+        setSearch({ ...search, loadState: LOAD_STATE.LOADING });
+        const response = unsplash.get('/search/photos', {
             params: {
-                client_id: appId,
-                query: search,
+                query: searchTerm,
                 page: page,
-                per_page: perPage
+                per_page: search.perPage
             }
-        };
-
-        this.setState({ loadState: LOAD_STATE.LOADING });
-        axios.get(baseUrl, options)
-            .then((response) => {
-                self.setState({
-                    photos: response.data,
-                    totalPhotos: parseInt(response.headers['x-total']),
-                    currentPage: page,
+        });
+        response
+            .then((res) => {
+                setSearch({
+                    ...search,
+                    term: searchTerm,
+                    photos: res.data,
                     loadState: LOAD_STATE.SUCCESS
                 });
             })
-            .catch((err) => {
-                console.log('errror -->', err)
-                this.setState({ loadState: LOAD_STATE.ERROR });
-            });
+            .catch(err => {
+                console.log('Error -> ', err)
+                setSearch({ ...search, loadState: LOAD_STATE.ERROR, errorInfo: err });
+            })
     }
 
 
-    debounce() {
-        this.debounceSearch.cancel()
-        this.setState({ term: this.input.current.value })
-        this.fetchPhotos(this.input.current.value, this.state.currentPage)
-    }
 
-    onChange = (event) => {
+    const onChange = (event) => {
         event.persist()
-        this.debounceSearch(event)
+        debounceSearch(event)
     }
 
-    renderHeader() {
+    const renderHeader = () => {
         return (
-            <div className="header">
-                <Link to="/" className="Logo">Unsplash</Link>
-                <div className="header-right">
+            <div>
+                <div className="search__box__container">
+                    <div className="field textbox__card">
                         <input
                             type="text"
                             placeholder="Search"
-                            ref={this.input}
-                            onChange={this.onChange}
+                            ref={input}
+                            onChange={onChange}
+                            className="textbox"
                         />
+                        <IoMdSearch style={{ display: 'flex', justifyContent: 'center' }} />
+                    </div>
                 </div>
             </div>
         )
     }
 
-    renderPagination = () => {
-        return (
-            <Pagination
-                searchTerm={this.state.term}
-                current={this.state.currentPage}
-                total={this.state.totalPhotos}
-                perPage={this.state.perPage}
-                onPageChanged={this.fetchPhotos.bind(this)}
-            />
-        )
-    }
-
-    renderLoader = () => {
-        return (
-            this.state.loadState === LOAD_STATE.LOADING
-                ? <div className="loader"></div>
-                : <List data={this.state.photos} />
-
-        )
-    }
-
-
-    renderError = () => {
+    const RenderError = () => {
         return (
             <div>
                 <h2>Something went wrong</h2>
                 <details style={{ whiteSpace: 'pre-wrap' }}>
-                    Error
+                    {search.errorInfo.toString()}
                 </details>
             </div>
         );
-        
+
     }
 
-    render() {
-        return (
-            <Fragment>
-                <div className="app">
-                    {this.renderHeader()}
-                    <div className="container">
-                        {this.renderPagination()}
-                        {this.renderLoader()}
-                    </div>
-                </div>
-            </Fragment>
 
+    const renderLoader = () => {
+        if (search.loadState == 'ERROR') {
+            return <RenderError />
+        }
+        return (
+            search.loadState === LOAD_STATE.LOADING
+                ? <div className="loader"></div>
+                : <List data={search.photos} />
         )
     }
-}
 
+    const loadMore = () => {
+        console.log(search)
+        if(!search.term) {
+            Swal.fire('Oops...', 'Search Field is empty!', 'info')
+        } else if(search.photos.results.length == 0) {
+            Swal.fire('Oops...', ' We are unable to find anymore items for you.', 'error')
+        } else {
+            setCount(count + 1)
+            fetchPhotos(search.term, count)
+        }
+    }
+
+
+
+    return (
+        <Fragment>
+            <div className="app">
+                {renderHeader()}
+                <div className="container">
+                    {renderLoader()}
+                </div>
+            </div>
+            <div className="search__box__btn__box">
+                <a href="#" className="load__more__btn" onClick={loadMore}>Load more</a>
+            </div>
+        </Fragment>
+
+    )
+
+}
 export default Home;

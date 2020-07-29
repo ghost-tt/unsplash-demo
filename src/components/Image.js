@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import Popup from "reactjs-popup";
 import history from '../history.js';
 import { IoMdDownload } from 'react-icons/io'
@@ -21,7 +21,7 @@ const DownloadImage = props => {
                         >
                             <IoMdDownload className="download__icon" />
                         </a>
-                        <img src={props.info.urls.full} alt={props.info.id} className="popup__img"/>
+                        <img src={props.info.urls.full} alt={props.info.id} className="popup__img" />
                     </div>
                 </div>
             </Popup>
@@ -32,34 +32,24 @@ const DownloadImage = props => {
 
 
 
-class Image extends React.Component {
+const Image = ({location}) => {
+    const [open, setModalState] = useState(false);
 
-    constructor(props) {
-        super(props);
-        this.state = { open: false };
-        this.openModal = this.openModal.bind(this);
-        this.closeModal = this.closeModal.bind(this);
+    const openModal = () => {
+        setModalState(true);
     }
 
-
-    openModal() {
-        this.setState({ open: true });
-    }
-
-    closeModal() {
-        this.setState({ open: false });
+    const closeModal = () => {
+        setModalState(false)
         history.push('/')
     }
 
-    render() {
-        const photo = this.props.location.state.info;
 
-        return (
-            <div className="grid__item card">
-                {!this.state.open && <DownloadImage info={photo} open={this.openModal} closeModal={this.closeModal} />}
-            </div>
-        )
-    }
+    return (
+        <div className="grid__item card">
+            {!open && <DownloadImage info={location.state.info} open={openModal} closeModal={closeModal} />}
+        </div>
+    )
 }
 
 

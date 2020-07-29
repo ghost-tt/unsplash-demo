@@ -12,7 +12,8 @@
     "react-icons": "^3.10.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.1",
-    "reactjs-popup": "^1.5.0"
+    "reactjs-popup": "^1.5.0",
+    "sweetalert2": "^9.17.1"
   },
   "scripts": {
     "start": "node server/server.js",
